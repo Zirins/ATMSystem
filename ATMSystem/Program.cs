@@ -328,7 +328,11 @@ class Program
     static void SearchAccount()
     {
         Console.Write("Enter account number: ");
-        int id = int.Parse(Console.ReadLine());
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("Invalid account number.");
+            return;
+        }
 
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
@@ -357,7 +361,11 @@ class Program
     static void UpdateAccount()
     {
         Console.Write("Enter account number: ");
-        int id = int.Parse(Console.ReadLine());
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("Invalid account number.");
+            return;
+        }
 
         Console.Write("New Holder Name: ");
         string holder = Console.ReadLine();
@@ -389,7 +397,7 @@ class Program
         int rows = cmd.ExecuteNonQuery();
 
         if (rows > 0)
-            Console.WriteLine("Account Successfully Created! The account number assigned for the account is: " + newId);
+            Console.WriteLine("Account Updated Successfully!!");
         else
             Console.WriteLine("Account not found");
     }
