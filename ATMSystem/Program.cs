@@ -169,7 +169,7 @@ class Program
         Console.Write("Enter deposit amount: ");
         decimal amount = decimal.Parse(Console.ReadLine());
 
-        using MySqlConnection conn = new MySqlConnection();
+        using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
 
         string checkQuery = "SELECT balance FROM accounts WHERE login=@login";
@@ -180,5 +180,59 @@ class Program
 
         decimal newBalance = balance + amount;
 
+        string updateQuery = "UPDATE accounts SET balance=@balance WHERE login=@login";
+        MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn);
+
+        updateCmd.Parameters.AddWithValue("@balance", newBalance);
+        updateCmd.Parameters.AddWithValue("@login", login);
+
+        updateCmd.ExecuteNonQuery();
+
+        Console.WriteLine("Cash Deposited Successfully");
+        Console.WriteLine("Deposited: " + amount);
+        Console.WriteLine("New Balance: " + newBalance);
+    }
+
+
+    static void AdminMenu()
+    {
+        while (true)
+        {
+            Console.WriteLine("\nADMIN MENU");
+            Console.WriteLine("1 - Create New Account");
+            Console.WriteLine("2 - Delete Account");
+            Console.WriteLine("3 - Update Account");
+            Console.WriteLine("4 - Search Account");
+            Console.WriteLine("5 - Exit");
+
+            Console.Write("Choose option: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    CreateAccount();
+                    break;
+
+                case "2":
+                    DeleteAccount();
+                    break;
+
+                case "3":
+                    UpdateAccount();
+                    break;
+
+                case "4":
+                    #SearchAccount();
+                    break;
+
+                case "5":
+                    return;
+
+                default:
+                    Console.WriteLine("Invalid option!! Enter a real option");
+                    break;
+            }
+        }
     }
 }
