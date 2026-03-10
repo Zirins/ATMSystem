@@ -90,10 +90,20 @@ class Program
                 case "1":
                     Console.WriteLine("Withdraw feature coming next...");
                     break;
+                case "2":
+                    Console.WriteLine("Deposit feature coming next...");
+                    break;
+                case "3":
+                    DisplayBalance(login);
+                    break;
+                case "4":
+                    return;
+                default:
+                    Console.WriteLine("Invalid option");
+                    break;
 
             }
         }
-
     }
 
 }
