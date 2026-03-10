@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Eventing.Reader;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using MySql.Data.MySqlClient;
@@ -50,7 +51,6 @@ class Program
                 if (role == "admin")
                 {
                     Console.WriteLine("Logged in as ADMIN");
-                    AdminMenu();
                 }
                 else
                 {
@@ -90,7 +90,7 @@ class Program
             switch (choice)
             {
                 case "1":
-                    Console.WriteLine("Withdraw feature coming next...");
+                    WithdrawCash(login);
                     break;
                 case "2":
                     Console.WriteLine("Deposit feature coming next...");
@@ -126,6 +126,22 @@ class Program
             Console.WriteLine("Balance: " + reader["balance"]);
         }    
     
+    }
+
+    static void WithdrawCash(string login)
+    {
+        Console.Write("Enter withdrawl amount: ");
+        decimal amount = decimal.Parse(Console.ReadLine());
+
+
+        using MySqlConnection conn = new MySqlConnection(connString);
+        conn.Open();
+
+        string checkQuery = "SELECT balance FROM accounts WHEREE login=@login";
+        MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
+        checkCmd.Parameters.AddWithValue("@login", login);
+
+
     }
 
 }
