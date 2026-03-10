@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics.Eventing.Reader;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Security.Permissions;
-using MySql.Data.MySqlClient;
-using Mysqlx.Cursor;
+﻿using MySql.Data.MySqlClient;
 
 class Program
 {
@@ -133,7 +127,11 @@ class Program
     static void WithdrawCash(string login)
     {
         Console.Write("Enter withdrawal amount: ");
-        decimal amount = decimal.Parse(Console.ReadLine());
+        if (!decimal.TryParse(Console.ReadLine(), out decimal amount) || amount <= 0)
+        {
+            Console.WriteLine("Invalid amount.");
+            return;
+        }
 
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
@@ -168,7 +166,11 @@ class Program
     static void DepositCash(string login)
     {
         Console.Write("Enter deposit amount: ");
-        decimal amount = decimal.Parse(Console.ReadLine());
+        if (!decimal.TryParse(Console.ReadLine(), out decimal amount) || amount <= 0)
+        {
+            Console.WriteLine("Invalid amount.");
+            return;
+        }
 
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
@@ -216,15 +218,15 @@ class Program
                     break;
 
                 case "2":
-                    // DeleteAccount();
+                    DeleteAccount();
                     break;
 
                 case "3":
-                    // UpdateAccount();
+                    UpdateAccount();
                     break;
 
                 case "4":
-                    // SearchAccount();
+                    SearchAccount();
                     break;
 
                 case "5":
