@@ -130,18 +130,37 @@ class Program
 
     static void WithdrawCash(string login)
     {
-        Console.Write("Enter withdrawl amount: ");
+        Console.Write("Enter withdrawal amount: ");
         decimal amount = decimal.Parse(Console.ReadLine());
-
 
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
 
-        string checkQuery = "SELECT balance FROM accounts WHEREE login=@login";
+        string checkQuery = "SELECT balance FROM accounts WHERE login=@login";
         MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
         checkCmd.Parameters.AddWithValue("@login", login);
 
+        decimal balance = Convert.ToDecimal(checkCmd.ExecuteScalar());
 
+        if (amount > balance)
+        {
+            Console.WriteLine("Insufficient funds.");
+            return;
+        }
+
+        decimal newBalance = balance - amount;
+
+        string updateQuery = "UPDATE accounts SET balance=@balance WHERE login=@login";
+        MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn);
+
+        updateCmd.Parameters.AddWithValue("@balance", newBalance);
+        updateCmd.Parameters.AddWithValue("@login", login);
+
+        updateCmd.ExecuteNonQuery();
+
+        Console.WriteLine("Cash Successfully Withdrawn");
+        Console.WriteLine("Withdrawn: " + amount);
+        Console.WriteLine("New Balance: " + newBalance);
     }
 
 }
