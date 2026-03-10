@@ -267,4 +267,25 @@ class Program
 
         Console.WriteLine("Account Successfully Created");
     }
+
+    static void DeleteAccount()
+    {
+        Console.Write("Enter account number to delete: ");
+        int id = int.Parse(Console.ReadLine());
+
+        using MySqlConnection conn = new MySqlConnection(connString);
+        conn.Open();
+
+        string query = "DELETE FROM accounts WHERE account_id=@id";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+
+        int rows = cmd.ExecuteNonQuery();
+
+        if (rows > 0)
+            Console.WriteLine("Account Deleted Successfully");
+        else
+            Console.WriteLine("Account Not Found");
+    }
 }
