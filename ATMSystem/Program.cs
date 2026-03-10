@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Eventing.Reader;
+using System.Security.Cryptography;
+using System.Security.Permissions;
 using MySql.Data.MySqlClient;
 
 class Program
@@ -104,6 +106,26 @@ class Program
 
             }
         }
+    }
+
+    static void DisplayBalance(string login)
+    {
+        using MySqlConnection conn = new MySqlConnection(connString);
+        conn.Open();
+
+        string query = "SELECT balance, account_id FROM accounts WHERE login=@login";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@login", login);
+
+        MySqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
+        {
+            Console.WriteLine("Account #" + reader["account_id"]);
+            Console.WriteLine("Balance: " + reader["balance"]);
+        }    
+    
     }
 
 }
