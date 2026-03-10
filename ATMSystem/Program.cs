@@ -295,17 +295,34 @@ class Program
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
 
-        string query = "DELETE FROM accounts WHERE account_id=@id";
+        string checkQuery = "SELECT holder_name FROM accounts WHERE account_id=@id";
 
-        MySqlCommand cmd = new MySqlCommand(query, conn);
+        MySqlCommand cmd = new MySqlCommand(checkQuery, conn);
         cmd.Parameters.AddWithValue("@id", id);
 
-        int rows = cmd.ExecuteNonQuery();
+        object result = cmd.ExecuteScalar();
 
-        if (rows > 0)
-            Console.WriteLine("Account Deleted Successfully");
-        else
-            Console.WriteLine("Account Not Found");
+        if (result == null)
+        {
+            Console.WriteLine("Account not found!!!");
+            return;
+        }
+
+        Console.WriteLine($"You want to delete the account held by {result}");
+        Console.Write("Enter the account number you wish to delete again to confirm: ");
+
+        if (!int.TryParse(Console.ReadLine(), out int confirmId) || confirmId != id)
+        {
+            Console.WriteLine("Confirmation failed.");
+            return;
+        }
+        string deleteQuery = "DELETE FROM accounts WHERE account_id=@id";
+        MySqlCommand deleteCmd = new MySqlCommand(deleteQuery, conn);
+        deleteCmd.Parameters.AddWithValue("@id", id);
+
+        deleteCmd.ExecuteNonQuery();
+
+        Console.WriteLine("Account Deleted Successfully!!");
     }
 
     static void SearchAccount()
@@ -372,7 +389,7 @@ class Program
         int rows = cmd.ExecuteNonQuery();
 
         if (rows > 0)
-            Console.WriteLine("Account Updated Successfully");
+            Console.WriteLine("Account Successfully Created! The account number assigned for the account is: " + newId);
         else
             Console.WriteLine("Account not found");
     }
