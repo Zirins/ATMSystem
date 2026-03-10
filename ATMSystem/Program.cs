@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using MySql.Data.MySqlClient;
+using Mysqlx.Cursor;
 
 class Program
 {
@@ -93,7 +94,7 @@ class Program
                     WithdrawCash(login);
                     break;
                 case "2":
-                    Console.WriteLine("Deposit feature coming next...");
+                    DepositCash(login);
                     break;
                 case "3":
                     DisplayBalance(login);
@@ -163,4 +164,21 @@ class Program
         Console.WriteLine("New Balance: " + newBalance);
     }
 
+    static void DepositCash(string login)
+    {
+        Console.Write("Enter deposit amount: ");
+        decimal amount = decimal.Parse(Console.ReadLine());
+
+        using MySqlConnection conn = new MySqlConnection();
+        conn.Open();
+
+        string checkQuery = "SELECT balance FROM accounts WHERE login=@login";
+        MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn);
+        checkCmd.Parameters.AddWithValue("@login", login);
+
+        decimal balance = Convert.ToDecimal(checkCmd.ExecuteScalar());
+
+        decimal newBalance = balance + amount;
+
+    }
 }
