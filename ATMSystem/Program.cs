@@ -288,4 +288,34 @@ class Program
         else
             Console.WriteLine("Account Not Found");
     }
+
+    static void SearchAccount()
+    {
+        Console.Write("Enter account number: ");
+        int id = int.Parse(Console.ReadLine());
+
+        using MySqlConnection conn = new MySqlConnection(connString);
+        conn.Open();
+
+        string query = "SELECT * FROM accounts WHERE account_id=@id";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+
+        MySqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
+        {
+            Console.WriteLine("\nAccount #" + reader["account_id"]);
+            Console.WriteLine("Holder: " + reader["holder_name"]);
+            Console.WriteLine("Balance: " + reader["balance"]);
+            Console.WriteLine("Status: " + reader["status"]);
+            Console.WriteLine("Login: " + reader["login"]);
+            Console.WriteLine("Pin: " + reader["pin"]);
+        }
+        else
+        {
+            Console.WriteLine("Account not found");
+        }
+    }
 }
