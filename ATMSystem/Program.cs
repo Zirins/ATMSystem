@@ -7,15 +7,18 @@ class Program
 
     static void Main()
     {
-        Console.WriteLine("ATM SYSTEM LOGIN SCREEN");
+        while (true)
+        {
+            Console.WriteLine("ATM SYSTEM LOGIN SCREEN");
 
-        Console.Write("Enter login info: ");
-        string login = Console.ReadLine();
+            Console.Write("Enter login info: ");
+            string login = Console.ReadLine();
 
-        Console.Write("Enter PIN: ");
-        string pin = Console.ReadLine();
+            Console.Write("Enter PIN: ");
+            string pin = Console.ReadLine();
 
-        Login(login, pin);
+            Login(login, pin);
+        }
 
     }
 
@@ -245,13 +248,23 @@ class Program
         string login = Console.ReadLine();
 
         Console.Write("Pin Code (5 digits): ");
-        int pin = int.Parse(Console.ReadLine());
+        string pinInput = Console.ReadLine();
+
+        if (pinInput.Length != 5 || !int.TryParse(pinInput, out int pin))
+        {
+            Console.WriteLine("PIN must be exactly 5 digits.");
+            return;
+        }
 
         Console.Write("Holder Name: ");
         string holder = Console.ReadLine();
 
         Console.Write("Starting Balance: ");
-        decimal balance = decimal.Parse(Console.ReadLine());
+        if (!decimal.TryParse(Console.ReadLine(), out decimal balance) || balance < 0)
+        {
+            Console.WriteLine("Invalid balance amount.");
+            return;
+        }
 
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
@@ -273,7 +286,11 @@ class Program
     static void DeleteAccount()
     {
         Console.Write("Enter account number to delete: ");
-        int id = int.Parse(Console.ReadLine());
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("Invalid account number.");
+            return;
+        }
 
         using MySqlConnection conn = new MySqlConnection(connString);
         conn.Open();
@@ -329,7 +346,13 @@ class Program
         string holder = Console.ReadLine();
 
         Console.Write("New PIN: ");
-        int pin = int.Parse(Console.ReadLine());
+        string pinInput = Console.ReadLine();
+
+        if (pinInput.Length != 5 || !int.TryParse(pinInput, out int pin))
+        {
+            Console.WriteLine("PIN must be exactly 5 digits.");
+            return;
+        }
 
         Console.Write("New Status (Active/Disabled): ");
         string status = Console.ReadLine();
