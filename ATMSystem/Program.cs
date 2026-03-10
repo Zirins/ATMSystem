@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 class Program
 {
 
-    string connString = "server=localhost;database=atm_system;uid=root;pwd=74327huHUFDdsf&&98767";
+    static string connString = "server=localhost;database=atm_system;uid=root;pwd=74327huHUFDdsf&&98767";
 
     static void Main()
     {
@@ -29,7 +29,7 @@ class Program
             using MySqlConnection conn = new MySqlConnection(connString);
             conn.Open();
 
-            string query = "SELECT role, holder_name FROM accounts WHERE login=l@login and pin=@pin";
+            string query = "SELECT role, holder_name FROM accounts WHERE login=@login and pin=@pin";
 
             MySqlCommand cmd = new MySqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@login", login);
@@ -43,14 +43,31 @@ class Program
                 string role = reader.GetString("role");
                 string name = reader.GetString("holder_name");
 
+                Console.WriteLine($"Welcome {name}");
 
+                if (role == "admin")
+                {
+                    Console.WriteLine("Logged in as ADMIN");
+                }
+                else
+                {
+                    Console.WriteLine("Logged in as CUSTOMER");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Invalid login or PIN");
             }
 
         }
 
 
-
-
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+        Console.ReadLine();
     }
 
 }
