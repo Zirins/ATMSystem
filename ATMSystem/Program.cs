@@ -52,6 +52,7 @@ class Program
                 if (role == "admin")
                 {
                     Console.WriteLine("Logged in as ADMIN");
+                    AdminMenu();
                 }
                 else
                 {
@@ -215,15 +216,15 @@ class Program
                     break;
 
                 case "2":
-                    DeleteAccount();
+                    // DeleteAccount();
                     break;
 
                 case "3":
-                    UpdateAccount();
+                    // UpdateAccount();
                     break;
 
                 case "4":
-                    #SearchAccount();
+                    // SearchAccount();
                     break;
 
                 case "5":
@@ -234,5 +235,36 @@ class Program
                     break;
             }
         }
+    }
+
+    static void CreateAccount()
+    {
+        Console.Write("Login: ");
+        string login = Console.ReadLine();
+
+        Console.Write("Pin Code (5 digits): ");
+        int pin = int.Parse(Console.ReadLine());
+
+        Console.Write("Holder Name: ");
+        string holder = Console.ReadLine();
+
+        Console.Write("Starting Balance: ");
+        decimal balance = decimal.Parse(Console.ReadLine());
+
+        using MySqlConnection conn = new MySqlConnection(connString);
+        conn.Open();
+
+        string query = "INSERT INTO accounts (login,pin,holder_name,balance,status,role) VALUES (@login,@pin,@holder,@balance,'Active','customer')";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+
+        cmd.Parameters.AddWithValue("@login", login);
+        cmd.Parameters.AddWithValue("@pin", pin);
+        cmd.Parameters.AddWithValue("@holder", holder);
+        cmd.Parameters.AddWithValue("@balance", balance);
+
+        cmd.ExecuteNonQuery();
+
+        Console.WriteLine("Account Successfully Created");
     }
 }
