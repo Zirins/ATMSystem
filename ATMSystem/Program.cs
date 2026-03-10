@@ -318,4 +318,37 @@ class Program
             Console.WriteLine("Account not found");
         }
     }
+    static void UpdateAccount()
+    {
+        Console.Write("Enter account number: ");
+        int id = int.Parse(Console.ReadLine());
+
+        Console.Write("New Holder Name: ");
+        string holder = Console.ReadLine();
+
+        Console.Write("New PIN: ");
+        int pin = int.Parse(Console.ReadLine());
+
+        Console.Write("New Status (Active/Disabled): ");
+        string status = Console.ReadLine();
+
+        using MySqlConnection conn = new MySqlConnection(connString);
+        conn.Open();
+
+        string query = "UPDATE accounts SET holder_name=@holder,pin=@pin,status=@status WHERE account_id=@id";
+
+        MySqlCommand cmd = new MySqlCommand(query, conn);
+
+        cmd.Parameters.AddWithValue("@holder", holder);
+        cmd.Parameters.AddWithValue("@pin", pin);
+        cmd.Parameters.AddWithValue("@status", status);
+        cmd.Parameters.AddWithValue("@id", id);
+
+        int rows = cmd.ExecuteNonQuery();
+
+        if (rows > 0)
+            Console.WriteLine("Account Updated Successfully");
+        else
+            Console.WriteLine("Account not found");
+    }
 }
