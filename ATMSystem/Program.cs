@@ -48,10 +48,12 @@ class Program
                 if (role == "admin")
                 {
                     Console.WriteLine("Logged in as ADMIN");
+                    AdminMenu();
                 }
                 else
                 {
                     Console.WriteLine("Logged in as CUSTOMER");
+                    CustomerMenu(login);
                 }
 
             }
@@ -68,6 +70,30 @@ class Program
             Console.WriteLine("Error: " + ex.Message);
         }
         Console.ReadLine();
+    }
+
+    static void CustomerMenu(string login)
+    {
+        while (true)
+        {
+            Console.WriteLine("CUSTOMER MENU (CHOOSE ONE OF THE 4 HERE)");
+            Console.WriteLine("1 - Withdraw Cash");
+            Console.WriteLine("2 - Deposit Cash");
+            Console.WriteLine("3 - Display Blanace");
+            Console.WriteLine("4 - Exit");
+
+            Console.WriteLine("Choose option: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    Console.WriteLine("Withdraw feature coming next...");
+                    break;
+
+            }
+        }
+
     }
 
 }
