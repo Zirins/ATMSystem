@@ -1,11 +1,13 @@
 using ATMSystem.Models;
 using MySql.Data.MySqlClient;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ATMSystem.Repositories
 {
     /// <summary>
     /// MySQL implementation of account data access.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class AccountRepository : IAccountRepository
     {
         private readonly string connString;

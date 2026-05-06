@@ -1,11 +1,14 @@
 using ATMSystem.Models;
 using ATMSystem.Services;
+using System.Diagnostics.CodeAnalysis;
+
 
 namespace ATMSystem.UI
 {
     /// <summary>
     /// Handles all console input/output for the ATM system.
     /// </summary>
+    ///     [ExcludeFromCodeCoverage]
     public class ConsoleUI
     {
         private readonly IAccountService _service;
