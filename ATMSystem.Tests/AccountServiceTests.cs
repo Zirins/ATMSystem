@@ -148,3 +148,117 @@ public class AccountServiceTests
 
         Assert.Equal(0, result);
     }
+
+    // ─── get balance tests
+
+    [Fact]
+    public void GetBalance_ValidLogin_ReturnsAccount()
+    {
+        var account = new Account { Login = "john", Balance = 500 };
+        _mockRepo.Setup(r => r.GetByLogin("john")).Returns(account);
+
+        var result = _service.GetBalance("john");
+
+        Assert.Equal(500, result.Balance);
+    }
+
+    [Fact]
+    public void GetBalance_AccountNotFound_ThrowsInvalidOperationException()
+    {
+        _mockRepo.Setup(r => r.GetByLogin("ghost")).Returns((Account?)null);
+
+        Assert.Throws<InvalidOperationException>(() => _service.GetBalance("ghost"));
+    }
+
+    // ─── create account tests
+
+    [Fact]
+    public void CreateAccount_ValidAccount_CallsRepoCreate()
+    {
+        var account = new Account
+        {
+            Login = "newuser",
+            Pin = "11111",
+            HolderName = "New User",
+            Balance = 100,
+        };
+
+        _service.CreateAccount(account);
+
+        _mockRepo.Verify(r => r.Create(account), Times.Once);
+    }
+
+    [Fact]
+    public void CreateAccount_EmptyLogin_ThrowsArgumentException()
+    {
+        var account = new Account { Login = "", Pin = "12345", Balance = 0 };
+
+        Assert.Throws<ArgumentException>(() => _service.CreateAccount(account));
+    }
+
+    [Fact]
+    public void CreateAccount_ShortPin_ThrowsArgumentException()
+    {
+        var account = new Account { Login = "john", Pin = "123", Balance = 0 };
+
+        Assert.Throws<ArgumentException>(() => _service.CreateAccount(account));
+    }
+
+    [Fact]
+    public void CreateAccount_NonNumericPin_ThrowsArgumentException()
+    {
+        var account = new Account { Login = "john", Pin = "abc12", Balance = 0 };
+
+        Assert.Throws<ArgumentException>(() => _service.CreateAccount(account));
+    }
+
+    [Fact]
+    public void CreateAccount_NegativeBalance_ThrowsArgumentException()
+    {
+        var account = new Account { Login = "john", Pin = "12345", Balance = -50 };
+
+        Assert.Throws<ArgumentException>(() => _service.CreateAccount(account));
+    }
+
+    [Fact]
+    public void CreateAccount_SetsDefaultStatusAndRole()
+    {
+        var account = new Account
+        {
+            Login = "john",
+            Pin = "12345",
+            HolderName = "John",
+            Balance = 0,
+            Status = "",
+            Role = "",
+        };
+
+        _service.CreateAccount(account);
+
+        Assert.Equal("Active", account.Status);
+        Assert.Equal("customer", account.Role);
+    }
+
+    // ─── delete account tests
+
+    [Fact]
+    public void DeleteAccount_ValidId_ReturnsHolderName()
+    {
+        var account = new Account { AccountId = 1, HolderName = "John Doe" };
+        _mockRepo.Setup(r => r.GetById(1)).Returns(account);
+
+        var result = _service.DeleteAccount(1);
+
+        Assert.Equal("John Doe", result);
+        _mockRepo.Verify(r => r.Delete(1), Times.Once);
+    }
+
+    [Fact]
+    public void DeleteAccount_AccountNotFound_ThrowsInvalidOperationException()
+    {
+        _mockRepo.Setup(r => r.GetById(99)).Returns((Account?)null);
+
+        Assert.Throws<InvalidOperationException>(() => _service.DeleteAccount(99));
+    }
+
+}
