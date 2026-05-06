@@ -261,4 +261,90 @@ public class AccountServiceTests
         Assert.Throws<InvalidOperationException>(() => _service.DeleteAccount(99));
     }
 
+ // ─── update account tests
+
+    [Fact]
+    public void UpdateAccount_ValidData_CallsRepoUpdate()
+    {
+        var existing = new Account { AccountId = 1, HolderName = "Old Name" };
+        _mockRepo.Setup(r => r.GetById(1)).Returns(existing);
+
+        var updated = new Account
+        {
+            AccountId = 1,
+            HolderName = "New Name",
+            Pin = "99999",
+            Status = "Active",
+        };
+
+        _service.UpdateAccount(updated);
+
+        _mockRepo.Verify(r => r.Update(updated), Times.Once);
+    }
+
+    [Fact]
+    public void UpdateAccount_AccountNotFound_ThrowsInvalidOperationException()
+    {
+        _mockRepo.Setup(r => r.GetById(99)).Returns((Account?)null);
+
+        var account = new Account { AccountId = 99, Pin = "12345", Status = "Active" };
+
+        Assert.Throws<InvalidOperationException>(() => _service.UpdateAccount(account));
+    }
+
+    [Fact]
+    public void UpdateAccount_InvalidPin_ThrowsArgumentException()
+    {
+        _mockRepo.Setup(r => r.GetById(1)).Returns(new Account { AccountId = 1 });
+
+        var account = new Account { AccountId = 1, Pin = "abc", Status = "Active" };
+
+        Assert.Throws<ArgumentException>(() => _service.UpdateAccount(account));
+    }
+
+    [Fact]
+    public void UpdateAccount_InvalidStatus_ThrowsArgumentException()
+    {
+        _mockRepo.Setup(r => r.GetById(1)).Returns(new Account { AccountId = 1 });
+
+        var account = new Account { AccountId = 1, Pin = "12345", Status = "Banana" };
+
+        Assert.Throws<ArgumentException>(() => _service.UpdateAccount(account));
+    }
+
+    [Fact]
+    public void UpdateAccount_DisabledStatus_Succeeds()
+    {
+        _mockRepo.Setup(r => r.GetById(1)).Returns(new Account { AccountId = 1 });
+
+        var account = new Account { AccountId = 1, Pin = "12345", Status = "Disabled" };
+
+        _service.UpdateAccount(account);
+
+        _mockRepo.Verify(r => r.Update(account), Times.Once);
+    }
+
+    // ─── search account tests
+
+    [Fact]
+    public void SearchAccount_ValidId_ReturnsAccount()
+    {
+        var account = new Account { AccountId = 1, HolderName = "John" };
+        _mockRepo.Setup(r => r.GetById(1)).Returns(account);
+
+        var result = _service.SearchAccount(1);
+
+        Assert.NotNull(result);
+        Assert.Equal("John", result.HolderName);
+    }
+
+    [Fact]
+    public void SearchAccount_NotFound_ReturnsNull()
+    {
+        _mockRepo.Setup(r => r.GetById(99)).Returns((Account?)null);
+
+        var result = _service.SearchAccount(99);
+
+        Assert.Null(result);
+    }
 }
