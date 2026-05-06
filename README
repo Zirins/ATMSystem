@@ -1,0 +1,67 @@
+# ATM System
+
+An ATM system with UI console. It's built with C#, MySQL, and layered architecture principles.
+
+## Features
+
+- Customer login
+- Deposit money
+- Withdraw money
+- Check balance
+- Admin account management
+- MySQL database support
+- Unit testing with xUnit and Moq
+- GitHub Actions CI workflow
+
+## Project Structure
+
+- Models → account data
+- Repositories → database operations
+- Services → business logic
+- UI → console menus and interaction
+
+## Technologies
+
+- C#
+- .NET 10
+- MySQL
+- xUnit
+- Moq
+- GitHub Actions
+
+## Database Setup
+
+Import the included SQL file:
+
+```sql
+SOURCE atm_system.sql;
+```
+
+Database name: atm_system
+
+## Run the Project
+
+```bash
+dotnet build
+dotnet run --project ATMSystem
+```
+
+## Run Tests
+
+```bash
+dotnet test
+```
+
+## Coverage
+
+Coverage reports can be generated with:
+
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+The service layer is fully unit tested at 100% coverage.
+
+## CI/CD
+
+GitHub Actions automatically builds and tests the project on every push.
